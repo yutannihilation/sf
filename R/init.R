@@ -41,6 +41,8 @@ pathGrob <- NULL
 	if ((s2 <- Sys.getenv("_SF_USE_S2")) != "")
 		options(sf_use_s2 = s2 != "false")
 	FULL_bbox_ <<- st_set_crs(FULL_bbox_, "OGC:CRS84")
+
+	CPL_init_adbc()
 }
 
 .onUnload = function(libname, pkgname) {

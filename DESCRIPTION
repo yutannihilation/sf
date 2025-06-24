@@ -175,3 +175,4 @@ Collate:
     'terra.R'
     'geos-overlayng.R'
     'break_antimeridian.R'
+    'adbc_duckdb.R'
