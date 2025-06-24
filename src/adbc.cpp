@@ -6,10 +6,9 @@
 
 #if GDAL_VERSION_NUM >= GDAL_COMPUTE_VERSION(3,11,0)
 #include <gdal_adbc.h>
-#include <cpl_conv.h>
 
-// TODO
-typedef uint8_t (*AdbcDriverInitFunc)(int version, void *driver, void *error); 
+typedef uint8_t AdbcStatusCode;
+typedef AdbcStatusCode (*AdbcDriverInitFunc)(int version, void* driver, void* error);
 
 static uint8_t SfGDALADBCLoadDriver(const char *driver_name,
                                     const char *entrypoint, int version,
@@ -20,12 +19,11 @@ static uint8_t SfGDALADBCLoadDriver(const char *driver_name,
     }
 
     Rcpp::Environment pkg = Rcpp::Environment::namespace_env("sf");
-    Rcpp::Function get_duckdb_dll_path = pkg["get_duckdb_dll_path"];
-    std::string duckdb_dll_path = Rcpp::as<std::string>(get_duckdb_dll_path());
+    Rcpp::Function get_duckdb_init_func = pkg["get_duckdb_init_func"];
 
-    void *load_handle = CPLGetSymbol(duckdb_dll_path.c_str(), "duckdb_adbc_init");
-    AdbcDriverInitFunc init_func = reinterpret_cast<AdbcDriverInitFunc>(load_handle);
-    return init_func(version, driver, error);
+    auto driver_init_func =
+        reinterpret_cast<AdbcDriverInitFunc>(R_ExternalPtrAddrFn(get_duckdb_init_func()));
+    return driver_init_func(version, driver, error);
 }
 
 #endif
