@@ -5,6 +5,7 @@ get_duckdb_dll_path <- function() {
 
   system.file(
     "libs",
+    .Platform$r_arch,
     paste0("duckdb", .Platform$dynlib.ext),
     package = "duckdb"
   )
